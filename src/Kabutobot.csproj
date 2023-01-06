@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+	  <StartWorkingDirectory>$(MSBuildProjectDirectory)</StartWorkingDirectory>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>KabutoBot</AssemblyName>
+    <RootNamespace>net.hempux.kabuto</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+    <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+    <!--<SelfContained>true</SelfContained>-->
+    <DebugSymbols>false</DebugSymbols>
+    <DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>8f999ce5-e4f4-4f4d-add3-51185bfef2dd</UserSecretsId>
+  </PropertyGroup>
+  <PropertyGroup>
+  <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  <BaseOutputPath>bin</BaseOutputPath>
+  <BaseIntermediateOutputPath>obj</BaseIntermediateOutputPath>
+</PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Proactive-Bot' " />
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.json" />
+    <Content Remove="manifest\manifest.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Protos\ninjaobject.proto" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="appsettings.Development.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="manifest\manifest.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AdaptiveCards" Version="3.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.8.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.4.0" />
+    <PackageReference Include="jsonsubtypes" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.10" />
+    <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.18.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="samplerequests\Devicecreated.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="samplerequests\DeviceDetailedinfo.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="samplerequests\OrgDetailedInfo.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json.sample">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="nuget.config3">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+</Project>

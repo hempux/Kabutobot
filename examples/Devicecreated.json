@@ -1,0 +1,22 @@
+﻿{
+  "id": 1389097,
+  "activityTime": 1672740950,
+  "deviceId": 262,
+  "severity": "MINOR",
+  "priority": "LOW",
+  "activityType": "SYSTEM",
+  "statusCode": "NODE_CREATED",
+  "status": "Enheten har skapats",
+  "activityResult": "SUCCESS",
+  "message": "Enhet 'BS-22383' registrerad.",
+  "type": "System",
+  "data": {
+    "message": {
+      "code": "device_registered",
+      "params": {
+        "nodeDisplayName": "BS-22383",
+        "nodeId": "617"
+      }
+    }
+  }
+}

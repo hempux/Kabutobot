@@ -1,0 +1,66 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool: Onprem
+
+variables:
+  solution: 'ProactiveBot.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  buildfolder: '/builds/kabutobot/$(Build.BuildNumber)/'
+
+
+steps:
+
+- task: NuGetAuthenticate@0
+  inputs:
+    #nuGetServiceConnections: MyOtherOrganizationFeed, MyExternalPackageRepository # Optional
+    forceReinstallCredentialProvider: false # Optional
+
+- task: UseDotNet@2
+  displayName: 'Configure build enviroment'
+  inputs:
+    version: '5.0.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish project'
+  inputs:
+    command: 'publish'
+    projects: '$(solution)'
+    arguments: '-o $(buildfolder) --self-contained -r debian-x64 /p:PublishSingleFile=true /p:DebugType=None /p:DebugSymbols=false'
+    publishWebProjects: false
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: Bash@3
+  displayName: Activate latest build
+  inputs:
+    targetType: inline
+    script: 'sudo /bin/bash /home/azurepipe/deploy.sh $(buildfolder)'
+
+
+#- task: Bash@3
+#  displayName: 'Save image to Artifact staging'
+#  inputs:
+#    targetType: 'inline'
+#    script: 'docker save kabutobot:latest | gzip > $(Build.ArtifactStagingDirectory)/kabuto.tar.gz'
+
+#- task: CopyFiles@2
+#  displayName: 'Copy files to staging folder'
+#  inputs:
+#    sourceFolder: '$(buildfolder)'
+#    contents: '**'
+#    targetFolder: $(Build.ArtifactStagingDirectory)
+
+#- task: PublishBuildArtifacts@1
+#  displayName: 'Upload files'
+#  inputs:
+#    pathToPublish: $(Build.ArtifactStagingDirectory)
+#    artifactName: 'MyBuildOutputs-$(Build.BuildNumber)'
+
+    

@@ -1,0 +1,48 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.8",
+    "version": "0.0.1",
+    "id": "f2d3c45f-bc13-4ae0-983f-0c1f64029bb2",
+    "packageName": "net.hempux.ninjaassistant",
+    "developer": {
+        "name": "Ninja Assistant",
+        "websiteUrl": "https://github.com/hempux/ninjabridge",
+        "privacyUrl": "https://github.com/hempux/ninjabridge",
+        "termsOfUseUrl": "https://github.com/hempux/ninjabridge"
+    },
+    "icons": {
+        "color": "Bot_logob.png",
+        "outline": "colo2.png"
+    },
+    "name": {
+        "short": "NinjaBridge",
+        "full": ""
+    },
+    "description": {
+        "short": "NinjaOne assistant.",
+        "full": "Bot that sends and recieves messages from NinjaOne."
+    },
+    "accentColor": "#FFFFFF",
+    "bots": [
+        {
+            "botId": "f2d3c45f-bc13-4ae0-983f-0c1f64029bb2",
+            "scopes": [
+                "personal",
+                "groupchat",
+                "team"
+            ],
+            
+            "supportsFiles": false,
+            "isNotificationOnly": false
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+  "validDomains": [
+    "*.ngrok.io",
+    "*.rmmservice.eu",
+    "*.ninjarmm.com"
+  ]
+}

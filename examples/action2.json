@@ -1,0 +1,24 @@
+{
+  "id": 1389208,
+  "activityTime": 1672743884,
+  "deviceId": 541,
+  "seriesUid": "4a2c8360-5877-4deb-b49d-3a1d5de55b53",
+  "activityType": "ACTIONSET",
+  "statusCode": "COMPLETED",
+  "status": "Slutfört",
+  "activityResult": "SUCCESS",
+  "sourceConfigUid": "23157aa3-c434-460e-9ced-9b64794ecf7b",
+  "sourceName": "Byt ut VPN-profiler",
+  "subject": "",
+  "message": "atgärd slutförd: Byt ut VPN-profiler",
+  "type": "atgärd vald",
+  "data": {
+    "message": {
+      "code": "agent_action_set_completed",
+      "params": {
+        "source_name": "Byt ut VPN-profiler",
+        "result": "SUCCESS"
+      }
+    }
+  }
+}

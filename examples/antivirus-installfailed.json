@@ -1,0 +1,18 @@
+{
+  "id": 1391673,
+  "activityTime": 1672836251,
+  "deviceId": 240,
+  "activityType": "ANTIVIRUS",
+  "statusCode": "BITDEFENDER_INSTALLATION_FAILED",
+  "status": "BitDefender-installation misslyckades",
+  "message": "Installation av Bitdefender failed because of an exisiting antivirus product: Bitdefender Endpoint Security",
+  "type": "Antivirus",
+  "data": {
+    "message": {
+      "code": "agent_act_bitdefender_inst_fail_other_av",
+      "params": {
+        "av_name": "Bitdefender Endpoint Security"
+      }
+    }
+  }
+}

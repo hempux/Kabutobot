@@ -1,0 +1,54 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "TextBlock",
+      "size": "Medium",
+      "weight": "Bolder",
+      "text": "A device is pending approval"
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Organization",
+          "value": "##ORGPH##"
+        },
+        {
+          "title": "Devicename",
+          "value": "DEVICENAMEPH"
+        }
+      ]
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "Approve",
+          "data": {
+            "msteams": {
+              "type": "messageBack",
+              "text": "deviceapproval",
+              "value": "{\"action\": \"approve\", \"systemid\": \"##SYSTEM_ID_PH##\"}"
+            }
+          }
+
+        },
+        {
+          "type": "Action.Submit",
+          "title": "Dismiss message",
+          "data": {
+            "msteams": {
+              "type": "messageBack",
+              "text": "delete",
+              "value": "{\"action\": \"delete\"}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.4"
+}

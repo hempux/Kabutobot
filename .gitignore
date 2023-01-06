@@ -1,0 +1,59 @@
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode
+
+# Rider
+.idea
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+src/docker-compose.override.yml
+
+# Build results
+src/[Dd]ebug/
+src/[Dd]ebugPublic/
+src/[Rr]elease/
+src/[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+src/[Bb]in/
+src/[Oo]bj/
+src/[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+
+**appsettings.json
+**appsettings.Development.json
+*.db
+# Visual Studio 2015
+**.vs/
+
+#Sqlite files
+**.sqlite*
+src/*.sqlite
+src/*.sqlite-shm
+src/*.sqlite-wal
+
+# activities (incoming webhooks)
+activites/
+
+# OpenAPI Generator
+.openapi-generator/
+openapi-generator-cli.jar
+
+#Publish profile files
+src/Properties/PublishProfiles/
+src/Properties/ServiceDependencies/

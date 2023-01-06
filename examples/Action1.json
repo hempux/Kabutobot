@@ -1,0 +1,22 @@
+{
+  "id": 1389206,
+  "activityTime": 1672743870,
+  "deviceId": 495,
+  "seriesUid": "4a2c8360-5877-4deb-b49d-3a1d5de55b53",
+  "activityType": "ACTIONSET",
+  "statusCode": "STARTED",
+  "status": "Startat",
+  "sourceConfigUid": "23157aa3-c434-460e-9ced-9b64794ecf7b",
+  "sourceName": "Namn på aktivitet",
+  "subject": "",
+  "message": "Kör skript: Namn på aktivitet",
+  "type": "atgard vald",
+  "data": {
+    "message": {
+      "code": "agent_action_set_started",
+      "params": {
+        "source_name": "Namn på aktivitet"
+      }
+    }
+  }
+}

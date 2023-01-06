@@ -1,0 +1,13 @@
+﻿{
+  "applicationUrl": "http://localhost:3978",
+  "SqliteDatabase": "optional-sqlite-filename.sqlite",
+  "MicrosoftAppId": "Microsoft-app-ID",
+  "MicrosoftAppPassword": "App-secret",
+  "MicrosoftBotendpoint": "https://(bot-endpoint-dnsname.com)/api/messages",
+  "MicrosoftTeamsServiceURL": "https://smba.trafficmanager.net/emea/",
+  "MicrosoftTeamsChannel": "Teams channel from BotInfo message",
+  "NinjaClientId": "Ninja Oauth Client ID",
+  "NinjaClientSecret": "Ninja Oauth clientsecret",
+  "NinjaEndpointUrl": "https://eu-api.ninjarmm.com or https://us-api.ninjarmm.com",
+  "NinjaOauthRedirectUrl": "https://(bot-endpoint-dnsname.com)/api/ninjaoauth"
+}

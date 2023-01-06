@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  kabutobot:
+    image: ${DOCKER_REGISTRY-}proactivebot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+       - ASPNETCORE_ENVIRONMENT=Development 
+    ports:
+    - target: 5000
+      published: 5080
+      protocol: tcp
+      mode: host
+    volumes:
+      - ~/kabuto:/app/data
+    networks:
+      default:
