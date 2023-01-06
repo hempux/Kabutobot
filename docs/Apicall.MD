@@ -15,7 +15,7 @@ In cases where you need to fetch items directly from a controller use NinjaFetch
 
 ##### Using sqlite (preferred)
   ```csharp
-    engine = new SqliteEngine();
+    SqliteEngine engine = new SqliteEngine();
     int nodeId = 123;
     DeviceModel device = await engine.GetDeviceById(nodeId);
 ```
