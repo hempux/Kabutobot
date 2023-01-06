@@ -1,11 +1,11 @@
 ﻿
 ### Classes
 #### Api endpoint Enums
-To simplify using the ninja endpoints in methods they are collected as constants in [src/Ninja/NinjaApiEnums.cs](src/Ninja/NinjaApiEnums.cs) 
+To simplify using the ninja endpoints in methods they are collected as constants in [`NinjaApiEnums.cs`](../src/Ninja/NinjaApiEnums.cs) 
 
 #### Objects from ninjas Api
 
-When any method needs information about items from ninja (a device, organization etc) the request is sent to the [`SqliteEngine`](src/Database/SqliteEngine.cs) class that checks if the data is available locally. If not a request is passed to [`NinjaApiV2`](src/Ninja/NinjaApiv2.cs) which will call the ninja API to get the neccessary information. This reduces the need for API calls and the chance of hitting any ratelimiting limits NinjaOne imposes for their APIs.
+When any method needs information about items from ninja (a device, organization etc) the request is sent to the [`SqliteEngine`](../src/Database/SqliteEngine.cs) class that checks if the data is available locally. If not a request is passed to [`NinjaApiV2`](../src/Ninja/NinjaApiv2.cs) which will call the ninja API to get the neccessary information. This reduces the need for API calls and the chance of hitting any ratelimiting limits NinjaOne imposes for their APIs.
 
 
 ### Fetching items
