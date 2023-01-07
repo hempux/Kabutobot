@@ -13,14 +13,14 @@ When any method needs information about items from ninja (a device, organization
 Generally when calling items you should use the database to look up objects since it will return objects if it is available in the local database, and if not it will fetch data from your ninjarmm instanace, save it to the sqlite database and then return the data.   
 In cases where you need to fetch items directly from a controller use NinjaFetchAsync<T> with Organization for fetching organizations, or NodeWithDetailedReferences for a device.
 
-##### Using sqlite (preferred)
+#### Using sqlite (preferred)
   ```csharp
     SqliteEngine engine = new SqliteEngine();
     int nodeId = 123;
     DeviceModel device = await engine.GetDeviceById(nodeId);
 ```
   
-#### Fetching data directly
+##### Fetching data directly
 ```csharp
     NinjaApiv2 api = new NinjaApiv2();
     int nodeId = 123;
