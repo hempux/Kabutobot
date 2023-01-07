@@ -1,6 +1,8 @@
 # Configuring NinjaOne
 
-### Oauth config
+The app needs to be able to communicate with your NinjaOne instance and for that to work we need to add it as an app in the NinjaOne control panel, we also need to enable the a notification channel that communicates with our bot to let us know when certain events trigger.
+
+### Oauth/app config
 In the lefthand panel browse to:
 	<i class="fas fa-cog" aria-hidden="true"></i>Administration {: #cog}
 	-> **Apps**
@@ -23,8 +25,8 @@ Allowed Grant Types:
     `Refresh Token` - So that the bot can stay connected and re-connect after the application restarts.
     You can revoke the bots access by deleting the token under the `OAuth Tokens` tab.
 
-
-Next, go to:  
+### Outgoing message/webhook config
+To configure the outgoing message, go to:  
     Administration
     -> **Apps**
     -> Notification Channels
