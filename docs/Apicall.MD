@@ -1,7 +1,5 @@
 ﻿
 ### Classes
-#### Api endpoint Enums
-To simplify using the ninja endpoints in methods they are collected as constants in [`NinjaApiEnums.cs`](../src/Ninja/NinjaApiEnums.cs) 
 
 #### Objects from ninjas Api
 
@@ -19,6 +17,9 @@ In cases where you need to fetch items directly from a controller use NinjaFetch
     int nodeId = 123;
     DeviceModel device = await engine.GetDeviceById(nodeId);
 ```
+
+##### Api endpoint Enums
+To simplify using the ninja endpoints in methods the ones that are used are collected as constants in [`NinjaApiEnums.cs`](../src/Ninja/NinjaApiEnums.cs) so they can be used as the first param for `NinjaFetchAsync<T>`(like in the example below)
   
 ##### Fetching data directly
 ```csharp
