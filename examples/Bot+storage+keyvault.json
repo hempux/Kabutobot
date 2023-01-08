@@ -1,0 +1,340 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vaultName": {
+            "type": "string",
+            "defaultValue": "Botkeyvault",
+            "minLength": 3,
+            "maxLength": 24,
+            "metadata": {
+                "description": "Name of the keyvault to be used"
+            }
+        },
+        "storageName": {
+            "type": "string",
+            "defaultValue": "botstorage",
+            "minLength": 3,
+            "maxLength": 24,
+            "metadata": {
+                "description": "Name of the storage to be used"
+            }
+        },
+        /* "blobName": {
+            "type": "string",
+            "defaultValue": "Botblob",
+            "minLength": 3,
+            "maxLength": 256,
+            "metadata": {
+                "description": "Name of the blob storage"
+            }
+        }, */
+        "vmName": {
+            "type": "string",
+            "defaultValue": "KabutoBot",
+            "minLength": 8,
+            "maxLength": 64,
+            "metadata": {
+                "description": "Name of virtual machine"
+            }
+        },
+        "vmUser": {
+            "type": "string",
+            "defaultValue": "Ubuntu",
+            "minLength": 4,
+            "maxLength": 20,
+            "metadata": {
+                "description": "Username on the VM"
+            }
+        },
+        "vmPassword": {
+            "type": "string",
+            "defaultValue": "Password123!",
+            "minLength": 12,
+            "metadata": {
+                "description": "Name of virtual machine"
+            }
+        },
+        "allowedSSH": {
+            "type": "string",
+            "defaultValue": "203.0.113.1",
+            "metadata": {
+
+                "description": "This is the external IP that will be allowed SSH access to the virtual machine."
+            }
+        }
+    },
+    "variables": {
+        "VMNetworkName": "[concat(parameters('vmName'),'virtualnetwork')]",
+     //   "BlobStorageName": "[tolower(format('{0}/default/{1}', parameters('storageName'), parameters('blobName')) )]",
+        "StorageName": "[tolower(parameters('storageName'))]",
+        "PublicIPName": "[concat(parameters('vmName'),'-publicIP')]",
+        "NetworkSGName": "[concat(parameters('vmName'),'-nsg')]",
+        "NetworkInterfaceName": "[concat(parameters('vmName'),'-NetworkInterface')]",
+        "SubnetName": "[toLower(concat(parameters('vmName'),'-subnet'))]"
+
+    },
+    "functions": [],
+    "resources": [
+      /*  {
+            "name": "[variables('BlobStorageName')]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-04-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },*/
+        {
+            "name": "[parameters('vaultName')]",
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[parameters('vaultName')]"
+            },
+            "properties": {
+                "enabledForDeployment": false,
+                "enabledForTemplateDeployment": false,
+                "enabledForDiskEncryption": false,
+
+                "tenantId": "[subscription().tenantId]",
+                "networkAcls": {
+                    "bypass": "None",
+                    "defaultAction": "Deny",
+
+                    "virtualNetworkRules": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VMNetworkName'), variables('SubnetName'))]",
+                            "ignoreMissingVnetServiceEndpoint": true
+                        }
+                    ]
+                },
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(concat('Microsoft.Compute/virtualMachines/', parameters('vmName')), '2022-11-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "Get",
+                                "Set"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "standard",
+                    "family": "A"
+                }
+            },
+            "resources": [
+            ]
+        },
+        {
+            "name": "[variables('StorageName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "tags": {
+                "displayName": "[parameters('storageName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            }
+        },
+        {
+            "name": "[variables('PublicIPName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2022-07-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "PublicIPAddress"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(parameters('vmName'))]"
+                }
+            }
+        },
+        {
+            "name": "[variables('NetworkSGName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Https-In",
+                        "properties": {
+                            "description": "Incomming HTTPS",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "[concat(parameters('allowedSSH'),'/32')]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+
+                    }
+
+                ]
+            }
+        },
+        {
+            "name": "[variables('VMNetworkName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSGName'))]"
+            ],
+            "tags": {
+                "displayName": "[variables('VMNetworkName')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('SubnetName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSGName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('NetworkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('VMNetworkName'))]"
+            ],
+            "tags": {
+                "displayName": "[variables('NetworkInterfaceName')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VMNetworkName'), variables('SubnetName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2021-03-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NetworkInterface'))]"
+            ],
+            "tags": {
+                "displayName": "[parameters('vmName')]"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1s"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('vmUser')]",
+                    "adminPassword": "[parameters('vmPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "0001-com-ubuntu-minimal-jammy",
+                        "sku": "minimal-22_04-lts",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('vmName'),'-OSDisk')]",
+                        "caching": "None",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmName'),'-NetworkInterface'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('StorageName'))).primaryEndpoints.blob]"
+                    }
+                }
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            }
+        },
+        {
+            "name": "[concat(variables('NetworkSGName'),'/SSH-access')]",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSGName'))]"
+            ],
+            "properties": {
+                "description": "Incoming SSH",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "[concat(parameters('allowedSSH'),'/32')]",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+            }
+        }
+    ],
+    "outputs": {
+        "fqdn": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))).dnsSettings.fqdn]"
+        },
+        "IP": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))).ipAddress]"
+        }
+   /*     "blobEndpoint":{
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('StorageName'))).primaryEndpoints.blob]"
+        }*/
+    }
+}
