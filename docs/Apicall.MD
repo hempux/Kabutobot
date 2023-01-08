@@ -8,7 +8,9 @@ When any method needs information about items from ninja (a device, organization
 
 ### Fetching items
 
-Generally when calling items you should use the database to look up objects since it will return objects if it is available in the local database, and if not it will fetch data from your ninjarmm instanace, save it to the sqlite database and then return the data.   
+Generally when calling items you should use the database to look up objects since it will return objects if it is available in the local database, and if not it will fetch data from your ninjarmm instanace, save it to the sqlite database and then return the data.  
+The DeviceModel/OrganizationModel classes that SqliteEngine returns has a One-to-One/Has-Many relationsships preconfigurured so that if you fetch a DeviceModel it will also return the organization name,and organizations will return known(cached) devices.
+
 In cases where you need to fetch items directly from a controller use NinjaFetchAsync<T> with Organization for fetching organizations, or NodeWithDetailedReferences for a device.
 
 #### Using sqlite (preferred)
