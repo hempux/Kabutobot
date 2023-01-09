@@ -4,7 +4,7 @@
     "parameters": {
         "vaultName": {
             "type": "string",
-            "defaultValue": "Botkeyvault",
+            "defaultValue": "[replace(substring(newGuid(),0,24),'-','0')]",
             "minLength": 3,
             "maxLength": 24,
             "metadata": {
@@ -13,22 +13,13 @@
         },
         "storageName": {
             "type": "string",
-            "defaultValue": "botstorage",
+            "defaultValue": "[replace(substring(newGuid(),0,24),'-','0')]",
             "minLength": 3,
             "maxLength": 24,
             "metadata": {
                 "description": "Name of the storage to be used"
             }
         },
-        /* "blobName": {
-            "type": "string",
-            "defaultValue": "Botblob",
-            "minLength": 3,
-            "maxLength": 256,
-            "metadata": {
-                "description": "Name of the blob storage"
-            }
-        }, */
         "vmName": {
             "type": "string",
             "defaultValue": "KabutoBot",
@@ -49,13 +40,13 @@
         },
         "vmPassword": {
             "type": "string",
-            "defaultValue": "Password123!",
+            "defaultValue": "[newGuid()]",
             "minLength": 12,
             "metadata": {
-                "description": "Name of virtual machine"
+                "description": "Password for the user (Will also be shown at the end of the deployment)"
             }
         },
-        "allowedSSH": {
+        "userIP": {
             "type": "string",
             "defaultValue": "203.0.113.1",
             "metadata": {
@@ -66,27 +57,16 @@
     },
     "variables": {
         "VMNetworkName": "[concat(parameters('vmName'),'virtualnetwork')]",
-     //   "BlobStorageName": "[tolower(format('{0}/default/{1}', parameters('storageName'), parameters('blobName')) )]",
         "StorageName": "[tolower(parameters('storageName'))]",
         "PublicIPName": "[concat(parameters('vmName'),'-publicIP')]",
         "NetworkSGName": "[concat(parameters('vmName'),'-nsg')]",
         "NetworkInterfaceName": "[concat(parameters('vmName'),'-NetworkInterface')]",
-        "SubnetName": "[toLower(concat(parameters('vmName'),'-subnet'))]"
+        "SubnetName": "[toLower(concat(parameters('vmName'),'-subnet'))]",
+        "AllowedIP": "[parameters('userIP')]"
 
     },
     "functions": [],
     "resources": [
-      /*  {
-            "name": "[variables('BlobStorageName')]",
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2021-04-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]"
-            ],
-            "properties": {
-                "publicAccess": "None"
-            }
-        },*/
         {
             "name": "[parameters('vaultName')]",
             "type": "Microsoft.KeyVault/vaults",
@@ -138,12 +118,35 @@
         {
             "name": "[variables('StorageName')]",
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2021-04-01",
+            "apiVersion": "2022-05-01",
             "tags": {
                 "displayName": "[parameters('storageName')]"
             },
             "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('VMNetworkName'))]"
+            ],
             "kind": "StorageV2",
+            "properties": {
+                "allowBlobPublicAccess": false,
+                "networkAcls": {
+                    "defaultAction": "Deny",
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [
+                        {
+                            "action": "Allow",
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VMNetworkName'), variables('SubnetName'))]",
+                            "state": "Succeeded"
+                        }
+                    ],
+                    "ipRules": [
+                        {
+                            "action": "Allow",
+                            "value": "[parameters('userIP')]"
+                        }
+                    ]
+                }
+            },
             "sku": {
                 "name": "Standard_LRS",
                 "tier": "Standard"
@@ -178,7 +181,7 @@
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
                             "destinationPortRange": "443",
-                            "sourceAddressPrefix": "[concat(parameters('allowedSSH'),'/32')]",
+                            "sourceAddressPrefix": "[concat(variables('allowedIP'))]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 101,
@@ -214,7 +217,13 @@
                             "addressPrefix": "10.0.0.0/24",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSGName'))]"
-                            }
+                            },
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+
+                            ]
                         }
                     }
                 ]
@@ -315,26 +324,56 @@
                 "protocol": "Tcp",
                 "sourcePortRange": "*",
                 "destinationPortRange": "22",
-                "sourceAddressPrefix": "[concat(parameters('allowedSSH'),'/32')]",
+                "sourceAddressPrefix": "[concat(variables('AllowedIP'),'/32')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 100,
                 "direction": "Inbound"
             }
-        }
+        },
+ {
+          "type": "Microsoft.Authorization/roleAssignments",
+          "apiVersion": "2022-04-01",
+          "name": "[guid(resourceId('Microsoft.Storage/storageAccounts/', variables('StorageName')),'contributor',resourceGroup().name)]",
+          "scope": "[concat('Microsoft.Storage/storageAccounts', '/', variables('storageName'))]",
+          "dependsOn": [
+              "[resourceId('Microsoft.Storage/storageAccounts/', variables('StorageName'))]"
+          ],
+          "properties": { 
+              "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleAssignments/','ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+              "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines',parameters('vmName')), '2022-08-01', 'full').identity.principalId]"
+          }
+      }
+        
     ],
     "outputs": {
         "fqdn": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))).dnsSettings.fqdn]"
         },
-        "IP": {
+        "SSH": {
             "type": "string",
-            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))).ipAddress]"
-        }
-   /*     "blobEndpoint":{
+            "value": "[concat(parameters('vmUser'),'@',reference(resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))).dnsSettings.fqdn)]"
+        },
+        "sshPassword": {
+            "type": "string",
+            "value": "[parameters('vmPassword')]"
+        },
+        "azure_vault_url": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))).vaultUri]"
+        },
+        "microsoftAppId": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines',parameters('vmName')), '2022-08-01', 'full').identity.principalId]"
+        },
+        "azure_client_id": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines',parameters('vmName')), '2022-08-01', 'full').identity.principalId]"
+        },
+        "blobEndpoint": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('StorageName'))).primaryEndpoints.blob]"
-        }*/
+        }
     }
 }
