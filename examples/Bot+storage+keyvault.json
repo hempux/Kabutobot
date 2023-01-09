@@ -4,7 +4,7 @@
     "parameters": {
         "vaultName": {
             "type": "string",
-            "defaultValue": "[replace(substring(newGuid(),0,24),'-','0')]",
+            "defaultValue": "[padleft(replace(substring(newGuid(),0,23),'-','0'),1,'v')]",
             "minLength": 3,
             "maxLength": 24,
             "metadata": {
@@ -56,6 +56,7 @@
         }
     },
     "variables": {
+        "Vaultname" :"[padLeft(parameters('vaultName'),16,'v')]",
         "VMNetworkName": "[concat(parameters('vmName'),'virtualnetwork')]",
         "StorageName": "[tolower(parameters('storageName'))]",
         "PublicIPName": "[concat(parameters('vmName'),'-publicIP')]",
@@ -68,7 +69,7 @@
     "functions": [],
     "resources": [
         {
-            "name": "[parameters('vaultName')]",
+            "name": "[variables('vaultName')]",
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2019-09-01",
             "dependsOn": [
