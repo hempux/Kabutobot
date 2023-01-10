@@ -1,0 +1,10 @@
+[Unit]
+Description=Kabutobot
+[Service]
+User=teamsbot
+WorkingDirectory=/app/kabutobot
+ExecStart=/app/kabutobot/KabutoBot
+Type=simple
+TimeoutStopSec=10
+[Install]
+WantedBy=multi-user.target
