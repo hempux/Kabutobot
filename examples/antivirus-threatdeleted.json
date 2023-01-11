@@ -5,7 +5,7 @@
   "activityType": "ANTIVIRUS",
   "statusCode": "BDAS_BITDEFENDER_THREAT_DELETED",
   "status": "BitDefender-hot raderades",
-  "message": "Ett hot har upptäckts. Namn: Trojan.Script.GenericKDZ.11122, Sökväg: C:\\Users\\Hotan Haghighatgoo\\AppData\\Local\\Microsoft\\Outlook\\hotan@bluescreen.se.ost=>[Time: 2022/04/01 18:25:49][Subject: FW: Invoice \"RNP583879248D11\"][From: Accounts], Typ: Virus, Status: Raderat",
+  "message": "Ett hot har upptäckts. Namn: Trojan.Script.GenericKDZ.11122, Sökväg: C:\\Users\\Hampu\\AppData\\Local\\Microsoft\\Outlook\\hampus@hempux.net.ost=>[Time: 2022/04/01 18:25:49][Subject: FW: Invoice \"RNP583879248D11\"][From: Accounts], Typ: Virus, Status: Raderat",
   "type": "Antivirus",
   "data": {
     "message": {

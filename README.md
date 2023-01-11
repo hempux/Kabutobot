@@ -5,7 +5,7 @@
 
 ## Prerequisites
 
-- [.NET Core SDK](https://dotnet.microsoft.com/download) version 5.0
+- [.NET Core SDK](https://dotnet.microsoft.com/download) version 6.0
 
   ```bash
   # determine dotnet version
@@ -17,7 +17,8 @@ The ninjaRMM API webhook stubs are generated from openAPI/swagger using [`OpenAP
 ```bash
 # Re-generate models from openAPI code
 java -jar openapi-generator-cli.jar generate -i https://resources.ninjarmm.com/API/webhook.yaml -g aspnetcore -o ninjawebhook --additional-properties packageName=net.hempux.ninjawebhook,buildTarget=library,operationResultTask=true,OperationsAsync=true,sourceFolder=ninjawebhook```
-After this copy over the following files to the `Ninja/Models` folder
+```
+After this copy over the following files to the `src/Ninja/WebhookClasses` folder
 * CustomEnumConverter.cs
 * DetailedActivity.cs
 * Location.cs
@@ -27,6 +28,7 @@ After this copy over the following files to the `Ninja/Models` folder
 * NodeWithDetailedReferences.cs
 * Organization.cs
 * Policy.cs
+
 
 ## To run the bot
 
@@ -51,33 +53,37 @@ After this copy over the following files to the `Ninja/Models` folder
 
 - Launch Bot Framework Emulator
 - File -> Open Bot
-- Enter a Bot URL of `http://localhost:3978/api/messages` (Or port 5080 if you are using docker-compose)
+- Enter a Bot URL of `http://localhost:3978/api/messages` (Or port `5080` if you are using docker-compose)
 
 ### Using curl/powershell to test incomming messages
 
 - Send a get request to `http://localhost:3978/api/ninjawebhook`  to simulate notifucations that the NinjaOne RMM service would send.
 
    ```bash
-    curl -X POST --data-binary samplerequests\WebhookDeviceMessage.json http://localhost:3978/api/ninjawebhook
+    curl -X POST --data-binary ./examples/WebhookDeviceMessage.json http://localhost:3978/api/ninjawebhook
    ```
 
    ```powershell
-   Invoke-RestMethod -Uri http://localhost:3978/api/ninjawebhook -Body (Get-Content .\samplerequests\WebhookDeviceMessage.json) -Method Post -ContentType "application/json"
+   Invoke-RestMethod -Uri http://localhost:3978/api/ninjawebhook -Body (Get-Content .\examples\WebhookDeviceMessage.json) -Method Post -ContentType "application/json"
    ```
 
 - Using the Bot Framework Emulator, notice a message was sent to the user from the bot.
 
 ## Setting up the bot.
 
-Visit the [Bot Framework developer portal](https://dev.botframework.com/bots/new) to register a new bot so that teams knows how to communicate with your bot.
+Visit the [Bot Framework developer portal](https://dev.botframework.com/bots/new) to register a new bot so that teams knows how to communicate with your bot.  
+To set up the bot and select what channel the ninjaRMM messages will be sent to you'll have to configure `MicrosoftTeamsChannel` and `MicrosoftServiceURL` in the file `appsettings.json` (or under enviroment if using docker)  
 
-To set up the bot and select what channel the ninjaRMM messages will be sent to you'll have to configure `MicrosoftTeamsChannel` and `MicrosoftServiceURL` in the file `appsettings.json` (or under enviroment if using docker)
+The bot has many configuration parameterers that needs to be set for everything to work, see the [Bot settings](docs/BotConfig.MD) page for details about `appsettings.json` /enviroment variables.  
+
 
 1. Make sure that the variable `ASPNET_ENVIRONMENT` is set to `development`
 2. Start the bot and @Mention it with the message 'channelinfo' ( like `@kabutobot channelinfo` ) 
 to get a list of all the valid channels and their MicrosoftTeamsChannel
 
-![channelinfo command screenshot](docs/channelinfo_command.png?raw=true)
+![channelinfo command screenshot](docs/channelinfo_command.png?raw=true)  
+
+
 
 # Configuring Ninja
 
