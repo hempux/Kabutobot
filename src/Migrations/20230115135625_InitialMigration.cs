@@ -9,20 +9,6 @@ namespace net.hempux.kabuto.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Devices",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    OrganizationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SystemName = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Devices", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Oauth",
                 columns: table => new
                 {
@@ -43,7 +29,8 @@ namespace net.hempux.kabuto.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    ApprovalMode = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,7 +38,7 @@ namespace net.hempux.kabuto.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "persistentdata",
+                name: "Persistentdata",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -61,12 +48,40 @@ namespace net.hempux.kabuto.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_persistentdata", x => x.Id);
+                    table.PrimaryKey("PK_Persistentdata", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Devices",
+                columns: table => new
+                {
+                    DeviceModelId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OrganizationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SystemName = table.Column<string>(type: "TEXT", nullable: true),
+                    dnsName = table.Column<string>(type: "TEXT", nullable: true),
+                    approvalStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeviceForeignKey = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Devices", x => x.DeviceModelId);
+                    table.ForeignKey(
+                        name: "FK_Devices_Organizations_DeviceForeignKey",
+                        column: x => x.DeviceForeignKey,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_persistentdata_Key",
-                table: "persistentdata",
+                name: "IX_Devices_DeviceForeignKey",
+                table: "Devices",
+                column: "DeviceForeignKey");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persistentdata_Key",
+                table: "Persistentdata",
                 column: "Key",
                 unique: true);
         }
@@ -80,10 +95,10 @@ namespace net.hempux.kabuto.Migrations
                 name: "Oauth");
 
             migrationBuilder.DropTable(
-                name: "Organizations");
+                name: "Persistentdata");
 
             migrationBuilder.DropTable(
-                name: "persistentdata");
+                name: "Organizations");
         }
     }
 }
