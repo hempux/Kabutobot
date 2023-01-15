@@ -5,29 +5,12 @@ namespace net.hempux.kabuto.AdaptiveCardShorteners
 {
     public class AdaptiveCardButtons
     {
-        public static AdaptiveSubmitAction DeleteButton()
-        {
 
-            dynamic dataObject = new JObject();
-            dataObject.msteams = new JObject();
-            dataObject.msteams.type = "messageBack";
-            dataObject.msteams.text = "delete";
-            dataObject.msteams.value = "{\"action\": \"delete\" }";
-            var actionSubmit = new AdaptiveSubmitAction()
-            {
-
-                Title = "Delete",
-                Data = dataObject,
-            };
-
-            return actionSubmit;
-        }
-
-        public static AdaptiveExecuteAction DeleteButtonExecute()
+        public static AdaptiveExecuteAction DeleteButtonExecute(string buttonText = null)
         {
             var button = new AdaptiveExecuteAction()
             {
-                Title = "Delete",
+                Title = buttonText ?? "Delete",
                 Verb = "deletecard"
             };
 

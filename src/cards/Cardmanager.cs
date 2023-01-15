@@ -7,6 +7,7 @@ using System.IO;
 using net.hempux.kabuto.AdaptiveCardShorteners;
 using net.hempux.ninjawebhook.Models;
 using net.hempux.kabuto.Ninja;
+using System.Diagnostics;
 
 namespace net.hempux.kabuto
 {
@@ -14,7 +15,7 @@ namespace net.hempux.kabuto
     public static class Cardmanager
     {
 
-        internal static Attachment NinjaNotificationCard(string orgName, string deviceName, string message, string cardHeader = null)
+        internal static Attachment NinjaNotificationCard(string orgName, string deviceName, DetailedActivity activity, string cardHeader = null)
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 4));
 
@@ -41,14 +42,18 @@ namespace net.hempux.kabuto
                     new AdaptiveFact()
                     {
                         Title ="Message:",
-                        Value=message
+                        Value= activity.Message
                     }
                 }
             });
-
+            card.Body.Add(new AdaptiveTextBlock()
+            {
+                Text = $"[ninjaRmm device link]({string.Concat(NinjaOptions.NinjaInstanceUrl, "/#/deviceDashboard/", activity.DeviceId, "/overview")})",
+                Size = AdaptiveTextSize.Medium
+            });
             card.Body.Add(new AdaptiveActionSet()
             {
-                Actions = { AdaptiveCardButtons.DeleteButton() }
+                Actions = { AdaptiveCardButtons.DeleteButtonExecute() }
             });
 
             // serialize the card to JSON
@@ -150,7 +155,6 @@ namespace net.hempux.kabuto
 
             return adaptiveCardAttachment;
         }
-
         internal static Attachment NinjaAntivirusThreatCard(string organization, string systemName,DetailedActivity activity, AntiviruseventDetails antiviruseventDetails)
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 4));
@@ -211,7 +215,7 @@ namespace net.hempux.kabuto
             });
             card.Body.Add(new AdaptiveActionSet()
             {
-                Actions = { AdaptiveCardButtons.DeleteButton() }
+                Actions = { AdaptiveCardButtons.DeleteButtonExecute() }
             });
 
             // serialize the card to JSON
