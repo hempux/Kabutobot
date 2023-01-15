@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using net.hempux.kabuto.Bot;
 using net.hempux.kabuto.database;
 using net.hempux.kabuto.Ninja;
+using net.hempux.kabuto.Options;
 using net.hempux.kabuto.Teamsoptions;
 using net.hempux.kabuto.VaultOptions;
 using System.Collections.Concurrent;
@@ -31,6 +32,8 @@ namespace net.hempux.kabuto
             NinjaOptions.Initialize(configuration);
             TeamsbotOptions.Initialize(configuration);
             KeyVaultOptions.Initialize(configuration);
+            Optionsvalidator.Validate(configuration);
+
 
             // Create Sqlite instance and initialize database
             sqlite = new SqliteEngine();
