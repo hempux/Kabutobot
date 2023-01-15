@@ -1,12 +1,8 @@
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using net.hempux.kabuto.Ninja;
 using net.hempux.kabuto.Options;
 using net.hempux.ninjawebhook.Models;
-using Newtonsoft.Json;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -131,51 +127,51 @@ namespace net.hempux.kabuto.database
         public DeviceModel[] GetDevicesByOrgId(int OrgId)
         {
 
-            
+
             var devices = db.Devices.Where(device => device.OrganizationId == OrgId);
             return devices.ToArray();
-            
 
-            
+
+
         }
         public async Task<OrganizationModel> GetOrganizationById(int organizationId)
         {
-            
 
-                OrganizationModel organization;
-                organization = db.Organizations.SingleOrDefault(m => m.Id == organizationId);
-                if (organization == null)
+
+            OrganizationModel organization;
+            organization = db.Organizations.SingleOrDefault(m => m.Id == organizationId);
+            if (organization == null)
+            {
+                try
                 {
-                    try
-                    {
-                        organization = await ninjaApi.NinjaFetchAsync<Organization>(NinjaApiEndpoint.getOrganization, organizationId);
+                    organization = await ninjaApi.NinjaFetchAsync<Organization>(NinjaApiEndpoint.getOrganization, organizationId);
 
 
-                        var orgDevices = db.Devices.Where(m => m.DeviceModelId == organizationId);
+                    var orgDevices = db.Devices.Where(m => m.DeviceModelId == organizationId);
 
 
-                        organization.Devices = orgDevices.ToList();
+                    organization.Devices = orgDevices.ToList();
 
-                        db.Organizations.Add(organization);
-                        db.SaveChanges();
-
-                    }
-                    catch (System.Exception)
-                    {
-                        throw;
-                    }
-
-
-                }
-                else
-                {
-
-                    organization.Devices = GetDevicesByOrgId(organization.Id).ToList();
-                    db.Organizations.Update(organization);
+                    db.Organizations.Add(organization);
                     db.SaveChanges();
+
                 }
-                return organization;
-            
+                catch (System.Exception)
+                {
+                    throw;
+                }
+
+
+            }
+            else
+            {
+
+                organization.Devices = GetDevicesByOrgId(organization.Id).ToList();
+                db.Organizations.Update(organization);
+                db.SaveChanges();
+            }
+            return organization;
+
 
         }
         public async Task<DeviceModel> GetDeviceById(int id)
@@ -193,14 +189,14 @@ namespace net.hempux.kabuto.database
                     Log.Error(ex.Message);
                     throw;
                 }
-                
+
 
                 if (devicedetails == null)
                     return null;
 
 
                 OrganizationModel organization = await GetOrganizationById(devicedetails.OrganizationId);
-                
+
                 devicedetails.Organization = organization;
 
 
@@ -210,7 +206,7 @@ namespace net.hempux.kabuto.database
                 return devicedetails;
 
             }
-            if(devicedetails.Organization == null)
+            if (devicedetails.Organization == null)
             {
                 OrganizationModel organization = await GetOrganizationById(devicedetails.OrganizationId);
 

@@ -20,8 +20,8 @@ namespace net.hempux.Controllers
         private static NinjaApiv2 ninjaApi { get; set; }
         public Ninjaoauth(IConfiguration configuration)
         {
-            if(ninjaApi == null)
-            ninjaApi = new NinjaApiv2();
+            if (ninjaApi == null)
+                ninjaApi = new NinjaApiv2();
         }
 
         [Route("manualtoken")]
@@ -35,16 +35,16 @@ namespace net.hempux.Controllers
                     ContentType = "Application/json",
                     StatusCode = (int)HttpStatusCode.BadRequest,
                 };
-           
-                   var token = await ninjaApi.GetOauthToken(HttpContext.Request.Query["code"]);
-                    return new ContentResult()
-                    {
-                        Content = "{ \"Token\":" + JsonConvert.SerializeObject(token) + "}",
-                        ContentType = "Application/json",
-                        StatusCode = (int)HttpStatusCode.OK,
-                    };
-                
-            
+
+            var token = await ninjaApi.GetOauthToken(HttpContext.Request.Query["code"]);
+            return new ContentResult()
+            {
+                Content = "{ \"Token\":" + JsonConvert.SerializeObject(token) + "}",
+                ContentType = "Application/json",
+                StatusCode = (int)HttpStatusCode.OK,
+            };
+
+
         }
 
 
@@ -82,7 +82,7 @@ namespace net.hempux.Controllers
 
 
 
-           return new RedirectResult("/api/oauthresult", permanent: false, preserveMethod: true);
+            return new RedirectResult("/api/oauthresult", permanent: false, preserveMethod: true);
         }
 
 

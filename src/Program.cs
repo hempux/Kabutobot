@@ -66,12 +66,13 @@ namespace net.hempux.kabuto
                 try
                 {
 
-                var Cfg = new ConfigurationBuilder()
-                               .SetBasePath(Directory.GetCurrentDirectory())
-                               .AddJsonFile("appsettings.json", optional: false)
-                               .Build();
-                AppOptions.Initialize(Cfg);
-                }catch (InvalidDataException)
+                    var Cfg = new ConfigurationBuilder()
+                                   .SetBasePath(Directory.GetCurrentDirectory())
+                                   .AddJsonFile("appsettings.json", optional: false)
+                                   .Build();
+                    AppOptions.Initialize(Cfg);
+                }
+                catch (InvalidDataException)
                 {
                     Log.Fatal("The appsettings.json is improperly formated.");
                     Console.ReadKey();
@@ -96,7 +97,7 @@ namespace net.hempux.kabuto
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    
+
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseUrls(AppOptions.ListenAddress);
                 });

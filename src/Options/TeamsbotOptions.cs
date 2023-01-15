@@ -1,6 +1,5 @@
 ﻿using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
-using net.hempux.kabuto.Utilities;
 using Serilog;
 using System;
 
@@ -24,8 +23,7 @@ namespace net.hempux.kabuto.Teamsoptions
             Botendpoint = configuration.GetValue<string>("MicrosoftBotendpoint");
             MicrosoftAppTenantId = configuration.GetValue<string>("MicrosoftAppTenantId");
             MicrosoftAppType = configuration.GetValue<string>("MicrosoftAppType") ?? "MultiTenant";
-            // Set Teamschannel and TeamsServiceUrl to string.Empty if we want to use bot emulator
-            // otherwise its supposed to fail the null-check validation in the try-catch
+            // Set Teamschannel and TeamsServiceUrl to string.Empty if we want to use bot emulator.
 
             TeamsChannel = (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") ?
                 configuration.GetValue<string>("MicrosoftTeamsChannel") ?? string.Empty :
@@ -36,43 +34,13 @@ namespace net.hempux.kabuto.Teamsoptions
 
             if (configuration.GetValue<string>("MicrosoftAppType") == "UserAssignedMSI")
             {
-
+                Log.Fatal("UserAssignedMSI not yet implemented for teams bot outgoing messages");
             }
             else
             {
                 _appCredentials = new MicrosoftAppCredentials(Appid, AppSecret);
             }
 
-
-
-            var validations = (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") ?
-                new object[] { Appid, AppSecret, Botendpoint } :
-                new object[] { Appid, AppSecret, Botendpoint, TeamsServiceUrl, TeamsChannel };
-
-            try
-            {
-                foreach (object val in validations)
-                    if (val == null) { throw new ArgumentNullException(); }
-            }
-            catch
-            {
-                Log.Error(
-                     "Make sure the following is present in configuration variables\n" +
-                     " - MicrosoftAppId\n " +
-                     " - MicrosoftAppPassword\n" +
-                     " - MicrosoftBotendpoint\n" +
-                     " - MicrosoftTeamsServiceURL\n" +
-                     " - MicrosoftTeamsChannel\n"
-                );
-
-                if (!Utils.InDocker)
-                {
-                    Log.Error("Press Enter to exit.");
-                    while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
-                }
-
-                Environment.Exit(1);
-            }
         }
 
         public static string Appid { get; set; }

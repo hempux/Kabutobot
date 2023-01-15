@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using net.hempux.kabuto.Utilities;
-using Serilog;
-using System;
 
 namespace net.hempux.kabuto.Ninja
 {
@@ -17,31 +14,6 @@ namespace net.hempux.kabuto.Ninja
             EndpointUrl = configuration.GetValue<string>("NinjaEndpointUrl");
             RedirectUrl = configuration.GetValue<string>("NinjaOauthRedirectUrl");
             NinjaInstanceUrl = configuration.GetValue<string>("NinjaInstanceUrl");
-
-            //Null validation
-            object[] opts = new object[] { Appid, AppSecret, EndpointUrl, RedirectUrl,NinjaInstanceUrl };
-            try
-            {
-                foreach (object o in opts)
-                    if (o == null) { throw new ArgumentNullException(); }
-                
-            }
-            catch
-            {
-                Log.Error(
-                    "Make sure the following is present in configuration variables:\n" +
-                    " - NinjaClientSecret\n" +
-                    " - NinjaClientId\n" +
-                    " - NinjaEndpointUrl\n" +
-                    " - NinjaOauthRedirectUrl\n" +
-                    " - NinjaInstanceUrl\n"
-                );
-
-                if (!Utils.InDocker)
-                    while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
-
-                Environment.Exit(1);
-            }
         }
 
         public static string Appid { get; set; }
