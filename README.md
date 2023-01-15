@@ -1,8 +1,6 @@
 # Kabuto aka NinjaRmm webhook-bridge
 ![Screenshot of sample card](docs/Sample_adaptivecard.png?raw=true)
 
-# Now with Automation!
-
 ## Prerequisites
 
 - [.NET Core SDK](https://dotnet.microsoft.com/download) version 6.0
@@ -51,13 +49,21 @@
 
 - Using the Bot Framework Emulator, notice a message was sent to the user from the bot.
 
+### Building
+
+Run the following, replacing `<rid>` with the platforming you want to run it on.  
+Use `win-x64` for windows and `debian-x64` for debian-based systems like ubuntu.
+``` 
+dotnet publish .\Kabutobot.csproj -r <rid> -o ..\build
+```
+This will create a self-contained executable for that platform in the top folder (next to `src`)
+
 ## Setting up the bot.
 
 Visit the [Bot Framework developer portal](https://dev.botframework.com/bots/new) to register a new bot so that teams knows how to communicate with your bot.  
 To set up the bot and select what channel the ninjaRMM messages will be sent to you'll have to configure `MicrosoftTeamsChannel` and `MicrosoftServiceURL` in the file `appsettings.json` (or under enviroment if using docker)  
 
 The bot has many configuration parameterers that needs to be set for everything to work, see the [Bot settings](docs/BotConfig.MD) page for details about `appsettings.json` /enviroment variables.  
-
 
 1. Make sure that the variable `ASPNET_ENVIRONMENT` is set to `development`
 2. Start the bot and @Mention it with the message 'channelinfo' ( like `@kabutobot channelinfo` ) 
