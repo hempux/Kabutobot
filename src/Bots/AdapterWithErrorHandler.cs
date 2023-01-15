@@ -36,9 +36,6 @@ namespace net.hempux.kabuto
 
                 Log.Error(exception, $"[OnTurnError] unhandled error : {exception.Message}");
 
-                // Send a message to the user
-                await turnContext.SendActivityAsync("The bot encountered an error or bug.");
-                //await turnContext.SendActivityAsync("Did you try to message it outside a teams channel?.");
 
                 if (conversationState != null)
                 {
