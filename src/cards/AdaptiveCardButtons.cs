@@ -1,5 +1,4 @@
 ﻿using AdaptiveCards;
-using Newtonsoft.Json.Linq;
 
 namespace net.hempux.kabuto.AdaptiveCardShorteners
 {

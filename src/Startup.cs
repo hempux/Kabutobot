@@ -21,7 +21,7 @@ namespace net.hempux.kabuto
 {
     public class Startup
     {
-    
+
         private NinjaApiv2 ninjaApi { get; }
         private SqliteEngine sqlite { get; }
         // Instantiate options in NinjaOptions
@@ -38,8 +38,8 @@ namespace net.hempux.kabuto
             // Create Sqlite instance and initialize database
             sqlite = new SqliteEngine();
             sqlite.InitDb();
-            
-            
+
+
             ninjaApi = new NinjaApiv2();
             // Set references to the sqlite and ninjaApi objects 
             sqlite.setApi(ninjaApi);

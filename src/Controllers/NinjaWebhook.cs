@@ -9,12 +9,10 @@ using net.hempux.kabuto.database;
 using net.hempux.kabuto.Ninja;
 using net.hempux.ninjawebhook.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -52,8 +50,9 @@ namespace net.hempux.Controllers
                 if (!Directory.Exists(savetarget))
                     try
                     {
-                    Directory.CreateDirectory(savetarget);
-                    }catch(Exception ex)
+                        Directory.CreateDirectory(savetarget);
+                    }
+                    catch (Exception ex)
                     {
                         Log.Error("Could not create folder for storing ninjarequests.");
                     }
@@ -101,24 +100,24 @@ namespace net.hempux.Controllers
                         ContentType = "application/json",
                         StatusCode = (int)HttpStatusCode.OK,
                     };
-               /* case ActivityTypeEnum.CONDITIONEnum:
-                    await HandleConditionActivity(detailedActivity);
-                    return new ContentResult()
-                    {
-                        Content = JsonConvert.SerializeObject(detailedActivity),
-                        ContentType = "application/json",
-                        StatusCode = (int)HttpStatusCode.OK,
-                    };
-                    
-                case ActivityTypeEnum.ACTIONEnum:
-                    break;
-                case ActivityTypeEnum.CONDITIONACTIONSETEnum:
-                    break;
-                case ActivityTypeEnum.CONDITIONACTIONEnum:
-                    break;
-                case ActivityTypeEnum.PATCHMANAGEMENTEnum:
-                    break;                   
-                     */
+                /* case ActivityTypeEnum.CONDITIONEnum:
+                     await HandleConditionActivity(detailedActivity);
+                     return new ContentResult()
+                     {
+                         Content = JsonConvert.SerializeObject(detailedActivity),
+                         ContentType = "application/json",
+                         StatusCode = (int)HttpStatusCode.OK,
+                     };
+
+                 case ActivityTypeEnum.ACTIONEnum:
+                     break;
+                 case ActivityTypeEnum.CONDITIONACTIONSETEnum:
+                     break;
+                 case ActivityTypeEnum.CONDITIONACTIONEnum:
+                     break;
+                 case ActivityTypeEnum.PATCHMANAGEMENTEnum:
+                     break;                   
+                      */
                 case ActivityTypeEnum.ANTIVIRUSEnum:
                     await HandleAntivirusActivity(detailedActivity, device);
                     return new ContentResult()
@@ -211,9 +210,9 @@ namespace net.hempux.Controllers
             switch (detailedActivity.StatusCode)
             {
                 case StatusCodeEnum.BDASBITDEFENDERTHREATDELETEDEnum or
-                     StatusCodeEnum.BDASBITDEFENDERTHREATBLOCKEDEnum or   
-                     StatusCodeEnum.BDASBITDEFENDERTHREATCLEANEDEnum or            
-                     StatusCodeEnum.BDASBITDEFENDERTHREATIGNOREDEnum or  
+                     StatusCodeEnum.BDASBITDEFENDERTHREATBLOCKEDEnum or
+                     StatusCodeEnum.BDASBITDEFENDERTHREATCLEANEDEnum or
+                     StatusCodeEnum.BDASBITDEFENDERTHREATIGNOREDEnum or
                      StatusCodeEnum.BDASBITDEFENDERTHREATPRESENTEnum or
                      StatusCodeEnum.BDASBITDEFENDERTHREATQUARANTINEDEnum:
                     await SendThreatDetailsCardAsync(device, detailedActivity);
@@ -225,7 +224,7 @@ namespace net.hempux.Controllers
 
 
         }
-        private async Task FallbackActivityHandler(DetailedActivity detailedActivity,DeviceModel device)
+        private async Task FallbackActivityHandler(DetailedActivity detailedActivity, DeviceModel device)
         {
             Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity, "A NinjaRmm notifiation has been triggered");
             await SendMessageAsync("A NinjaRmm notifiation has been triggered.", newdeviceCard);

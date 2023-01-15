@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using net.hempux.kabuto.Utilities;
-using Serilog;
-using System;
 
 namespace net.hempux.kabuto.Ninja
 {

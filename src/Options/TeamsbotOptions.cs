@@ -1,6 +1,5 @@
 ﻿using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
-using net.hempux.kabuto.Utilities;
 using Serilog;
 using System;
 

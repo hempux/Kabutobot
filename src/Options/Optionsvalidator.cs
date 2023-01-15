@@ -6,7 +6,6 @@ using net.hempux.kabuto.VaultOptions;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 
 namespace net.hempux.kabuto.Options
 {

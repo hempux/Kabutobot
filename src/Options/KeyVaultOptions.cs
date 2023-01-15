@@ -1,23 +1,21 @@
-﻿using Microsoft.Extensions.Configuration;
-using net.hempux.kabuto.Utilities;
+﻿using Azure.Core;
 using Azure.Identity;
+using Microsoft.Extensions.Configuration;
+using net.hempux.kabuto.Database;
 using Serilog;
 using System;
-using Azure.Core;
-using System.Collections.Generic;
-using net.hempux.kabuto.Database;
 
 namespace net.hempux.kabuto.VaultOptions
 {
     public static class KeyVaultOptions
     {
         private static IConfiguration configuration;
-        private static string AZURE_CLIENT_SECRET;
+        private static readonly string AZURE_CLIENT_SECRET;
         public static bool AZURE_PASSWORD_IS_BLANK = true;
         public static string AZURE_CLIENT_ID { get; private set; }
         public static string AZURE_TENANT_ID { get; private set; }
-        public static string AZURE_VAULT_URL {get;private set;}
-        public static TokenCredential Azurecredentials {get;private set;}
+        public static string AZURE_VAULT_URL { get; private set; }
+        public static TokenCredential Azurecredentials { get; private set; }
 
 
         public static void Initialize(IConfiguration Configuration)
@@ -25,7 +23,7 @@ namespace net.hempux.kabuto.VaultOptions
 
             configuration = Configuration;
 
-            if(configuration.GetValue<string>("UseAzureKeyVault") != "true")
+            if (configuration.GetValue<string>("UseAzureKeyVault") != "true")
             {
                 Keystore.Init(false);
                 return;
@@ -50,7 +48,7 @@ namespace net.hempux.kabuto.VaultOptions
             });
 
 
-            }
         }
-
     }
+
+}

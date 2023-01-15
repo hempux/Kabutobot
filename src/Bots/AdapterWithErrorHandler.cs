@@ -36,7 +36,7 @@ namespace net.hempux.kabuto
 
                 Log.Error(exception, $"[OnTurnError] unhandled error : {exception.Message}");
 
-                
+
                 if (conversationState != null)
                 {
                     try

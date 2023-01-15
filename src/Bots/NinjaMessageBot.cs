@@ -10,16 +10,13 @@ using Microsoft.Bot.Schema.Teams;
 using Microsoft.Extensions.Configuration;
 using net.hempux.kabuto.Ninja;
 using net.hempux.kabuto.Teamsoptions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using net.hempux.kabuto.database;
 
 namespace net.hempux.kabuto.Bot
 {
@@ -28,7 +25,7 @@ namespace net.hempux.kabuto.Bot
         private readonly ConcurrentDictionary<string, ConversationReference> _conversationReferences;
         private readonly string _baseUrl;
         private static NinjaApiv2 ninjaApi;
-        private IConfiguration configuration;
+        private readonly IConfiguration configuration;
 
         public NinjaMessageBot(IConfiguration config, ConcurrentDictionary<string, ConversationReference> conversationReferences)
         {
