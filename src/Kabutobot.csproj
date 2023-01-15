@@ -8,11 +8,21 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
     <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
-    <!--<SelfContained>true</SelfContained>-->
     <DebugSymbols>false</DebugSymbols>
     <DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>8f999ce5-e4f4-4f4d-add3-51185bfef2dd</UserSecretsId>
+	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+	  <OutputType>Exe</OutputType>
+	  <SelfContained>true</SelfContained>
+	<PublishTrimmed>true</PublishTrimmed>
+	<PublishReadyToRun>true</PublishReadyToRun>
+	<PublishSingleFile>true</PublishSingleFile>
+	  <DebugType>embedded</DebugType>
+	  <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+	  <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
+
   <PropertyGroup>
   <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
@@ -81,7 +91,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="activites\" />
     <Folder Include="Migrations\" />
     <Folder Include="Resources\" />
   </ItemGroup>

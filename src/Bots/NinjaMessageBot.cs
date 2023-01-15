@@ -28,6 +28,7 @@ namespace net.hempux.kabuto.Bot
         private readonly ConcurrentDictionary<string, ConversationReference> _conversationReferences;
         private readonly string _baseUrl;
         private static NinjaApiv2 ninjaApi;
+        private IConfiguration configuration;
 
         public NinjaMessageBot(IConfiguration config, ConcurrentDictionary<string, ConversationReference> conversationReferences)
         {
@@ -35,6 +36,7 @@ namespace net.hempux.kabuto.Bot
             _conversationReferences = conversationReferences;
             _baseUrl = TeamsbotOptions.Botendpoint;
             ninjaApi = new NinjaApiv2();
+            configuration = config;
 
         }
         public static void Init(NinjaApiv2 ninjaApiv2)
@@ -86,7 +88,7 @@ namespace net.hempux.kabuto.Bot
 
                 string[] commanddata = turnContext.Activity.Text.Split(" ");
 
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() != "development")
+                if (configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT")?.ToLower() != "development")
                     return;
 
                 switch (commanddata[0].ToLower())

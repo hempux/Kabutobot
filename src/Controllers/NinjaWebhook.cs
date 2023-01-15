@@ -59,7 +59,7 @@ namespace net.hempux.Controllers
                     }
 
                 string filepath = string.Concat(savetarget, detailedActivity.Id, ".json");
-                Log.Information("Saving ninjareqest {id} to file {filename}", detailedActivity.Id, filepath);
+                Log.Information("Saving ninjarequest {id} to file {filename}", detailedActivity.Id, filepath);
                 var json = JsonConvert.SerializeObject(detailedActivity, Formatting.Indented);
                 System.IO.File.WriteAllText(filepath, json);
             }
@@ -71,8 +71,7 @@ namespace net.hempux.Controllers
                 {
                     Content = $"{{\"Error\":\"No valid NinjaApi Token available\"}}",
                     ContentType = "application/json",
-                    StatusCode = (int)HttpStatusCode.NoContent,
-                    // Send 204 instead of 404 so that NinjaOne does not disable the webhook/notification channel.
+                    StatusCode = (int)HttpStatusCode.ServiceUnavailable
                 };
             #endregion
 
@@ -180,7 +179,6 @@ namespace net.hempux.Controllers
             if (detailedActivity.StatusCode == StatusCodeEnum.STARTEDEnum)
             {
 
-                var activitydata = (JObject)JsonConvert.DeserializeObject(detailedActivity.Data.Values.FirstOrDefault().ToString());
                 Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity, "A ninja task was started.");
                 var teamsMessage = await SendMessageWithMessageIdResultAsync("A ninja task was started.", newdeviceCard);
 
@@ -190,13 +188,19 @@ namespace net.hempux.Controllers
             else if (detailedActivity.StatusCode == StatusCodeEnum.COMPLETEDEnum)
             {
 
+
+                // Try to look up the message SeriesUid in the local actionFeed, if its found we can reply to our earlier message, rather than creating a new message in the channel.
                 if (actionFeed.TryGetValue(detailedActivity.SeriesUid, out var teamsmessage))
                 {
 
-                    var activitydata = (JObject)JsonConvert.DeserializeObject(detailedActivity.Data.Values.FirstOrDefault().ToString());
                     Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity, "A ninja task has finished.");
                     await SendMessageReplyAsync(teamsmessage, newdeviceCard);
 
+                }
+                else
+                {
+                    Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity, "A ninja task has finished.");
+                    await SendMessageWithMessageIdResultAsync("A ninja task has finished", newdeviceCard);
                 }
 
             }
