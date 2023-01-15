@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using net.hempux.kabuto.Ninja;
 
@@ -15,7 +14,7 @@ namespace net.hempux.kabuto.Pages
             else
                 OauthStatus = "There was an issue with the authorization. " +
                     "Please retry or restart the application/bot";
-                
+
 
 
         }

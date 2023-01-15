@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using net.hempux.kabuto.Ninja;
 using net.hempux.kabuto.Options;
 using net.hempux.ninjawebhook.Models;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
@@ -16,7 +14,7 @@ namespace net.hempux.kabuto.database
     public class TeamsBotDbContext : DbContext
     {
 
-       
+
         public DbSet<OrganizationModel> Organizations { get; set; }
         public DbSet<DeviceModel> Devices { get; set; }
         public DbSet<OauthModel> Oauth { get; set; }
@@ -44,7 +42,7 @@ namespace net.hempux.kabuto.database
 
         }
 
-        
+
 
 
     }

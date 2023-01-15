@@ -10,16 +10,13 @@ using Microsoft.Bot.Schema.Teams;
 using Microsoft.Extensions.Configuration;
 using net.hempux.kabuto.Ninja;
 using net.hempux.kabuto.Teamsoptions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using net.hempux.kabuto.database;
 
 namespace net.hempux.kabuto.Bot
 {
@@ -28,13 +25,15 @@ namespace net.hempux.kabuto.Bot
         private readonly ConcurrentDictionary<string, ConversationReference> _conversationReferences;
         private readonly string _baseUrl;
         private static NinjaApiv2 ninjaApi;
+        private readonly IConfiguration configuration;
 
         public NinjaMessageBot(IConfiguration config, ConcurrentDictionary<string, ConversationReference> conversationReferences)
         {
-            
+
             _conversationReferences = conversationReferences;
             _baseUrl = TeamsbotOptions.Botendpoint;
             ninjaApi = new NinjaApiv2();
+            configuration = config;
 
         }
         public static void Init(NinjaApiv2 ninjaApiv2)
@@ -80,47 +79,19 @@ namespace net.hempux.kabuto.Bot
             AddConversationReference(turnContext.Activity as Activity);
 
             turnContext.Activity.RemoveRecipientMention();
-            if (!(turnContext.Activity.Value == null))
-            {
-                try
-                {
-                    JObject details = JObject.Parse(turnContext.Activity.Value.ToString());
-                    Log.Debug("Got Card value.");
-                }
-                catch (JsonReaderException)
-                {
-
-                    Log.Error("Got Card value but could not Json-decode it.");
-
-                }
-
-            }
-
 
             if (!(turnContext.Activity.Text == null))
             {
 
-
-
                 string[] commanddata = turnContext.Activity.Text.Split(" ");
 
-                // Do nothing if we are mentioned and the mention does not start with "botaction" or we only get "botaction"                 
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower() != "development")
+                if (configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT")?.ToLower() != "development")
                     return;
 
                 switch (commanddata[0].ToLower())
                 {
-                    case "test":
-                        await TestFunction(turnContext, cancellationToken);
-                        break;
                     case "channelinfo":
                         await SendChannelInfoAsync(turnContext, cancellationToken);
-                        break;
-                    case ".devices":
-                        await GetPendingDevices(turnContext, cancellationToken);
-                        break;
-                    case "deviceapproval":
-                        await HandleDeviceApproval(turnContext, cancellationToken);
                         break;
                     default:
                         break;
@@ -158,78 +129,6 @@ namespace net.hempux.kabuto.Bot
             var result = await connector.Conversations.CreateConversationAsync(conversationParams);
             NinjaApiv2.SetMessageId(result.ActivityId);
         }
-        private async Task HandleDeviceApproval(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            JObject details = JObject.Parse(turnContext.Activity.Value.ToString());
-            var activity = new Activity();
-            activity.Id = turnContext.Activity.ReplyToId;
-            if (!(details["action"].ToString() == "approve"))
-                return;
-
-            try
-            {
-                activity.Text = $"{details["action"]}d device with Id {details["systemid"]}";
-                int[] deviceid = new int[1];
-                deviceid[0] = Convert.ToInt32(details["id"]);
-                await ninjaApi.ApproveDevice(new NinjaDeviceApproval() { devices = deviceid });
-
-            }
-            catch
-            {
-                activity.Text = $"Something went wrong trying to {details["action"]} device with Id {details["systemid"]}" + Environment.NewLine
-                       + $"Go to the NinjaOne Control panel and manually {details["action"]} the device";
-            }
-            finally
-            {
-
-                await turnContext.UpdateActivityAsync(activity, cancellationToken);
-            }
-
-            await Task.Delay(5000);
-
-            var member = await TeamsInfo.GetMemberAsync(turnContext, turnContext.Activity.From.Id, cancellationToken);
-
-        }
-        private async Task GetPendingDevices(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            var pendingdevices = await ninjaApi.NinjaFetchAsync <DeviceModel[]>(NinjaApiEndpoint.pendingDevices);
-            
-            if (pendingdevices.Count() == 0)
-            {
-                _ = await turnContext.SendActivityAsync(MessageFactory.Text($"No pending devices found")); 
-                return;
-
-            }
-
-
-            List<int> devs = new List<int>();
-
-            foreach (var device in pendingdevices)
-            {
-
-                devs.Add(device.DeviceModelId);
-            }
-            NinjaDeviceApproval approvals = new NinjaDeviceApproval { devices = devs.ToArray() };
-
-            var resp = await ninjaApi.ApproveDevice(approvals);
-
-            _ = await turnContext.SendActivityAsync(MessageFactory.Text(JsonConvert.SerializeObject(approvals)));
-        }
-        private async Task ApproveDevice(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken, int deviceid)
-        {
-            Console.WriteLine("Approving device ");
-            _ = await turnContext.SendActivityAsync(MessageFactory.Text($"Approving device with Id {deviceid}"));
-        }
-        private async Task DeleteCardActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-
-            JObject details = JObject.Parse(turnContext.Activity.Value.ToString());
-            if (!(details["action"].ToString() == "delete"))
-                return;
-
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                await turnContext.DeleteActivityAsync(turnContext.Activity.ReplyToId, cancellationToken);
-        }
         private async Task SendChannelInfoAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             TeamDetails teamDetails = await TeamsInfo.GetTeamDetailsAsync(turnContext, turnContext.Activity.TeamsGetTeamInfo().Id, cancellationToken);
@@ -237,7 +136,7 @@ namespace net.hempux.kabuto.Bot
             if (teamDetails != null)
             {
                 var channels = await TeamsInfo.GetTeamChannelsAsync(turnContext).ConfigureAwait(false);
-                var channelscard = Cardmanager.channelscard(channels,turnContext.Activity.ServiceUrl);
+                var channelscard = Cardmanager.channelscard(channels, turnContext.Activity.ServiceUrl);
 
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(channelscard));
 
@@ -247,7 +146,6 @@ namespace net.hempux.kabuto.Bot
                 await turnContext.SendActivityAsync($"You can't request information about channels outside a team.");
             }
         }
-
         protected override async Task OnReactionsAddedAsync(IList<MessageReaction> messageReactions, ITurnContext<IMessageReactionActivity> turnContext, CancellationToken cancellationToken)
         {
             foreach (var reaction in messageReactions)
@@ -266,6 +164,36 @@ namespace net.hempux.kabuto.Bot
             }
 
         }
+        protected override async Task<InvokeResponse> OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (turnContext.Activity.Name == null && turnContext.Activity.ChannelId == Channels.Msteams || !(turnContext.Activity.Name == "adaptiveCard/action"))
+                return await OnTeamsCardActionInvokeAsync(turnContext, cancellationToken).ConfigureAwait(false);
+
+
+            try
+            {
+                var details = JObject.Parse(turnContext.Activity.Value.ToString());
+                if (!string.IsNullOrEmpty((string)details.SelectToken("action.verb")))
+                {
+                    switch ((string)details.SelectToken("action.verb").ToString().ToLower())
+                    {
+                        case "deletecard":
+                            await turnContext.DeleteActivityAsync(turnContext.Activity.ReplyToId);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                return await base.OnInvokeActivityAsync(turnContext, cancellationToken);
+            }
+
+            catch (InvokeResponseException e)
+            {
+                return e.CreateInvokeResponse();
+            }
+        }
+
 
     }
 }

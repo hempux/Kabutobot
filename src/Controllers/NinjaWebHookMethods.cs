@@ -20,13 +20,13 @@ namespace net.hempux.Controllers
 
         private async Task SendRejectedAutomaticallyCardAsync(DetailedActivity detailedActivity, DeviceModel device)
         {
-            Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity.Message, "A new device has been automatically rejected by organization policy.");
+            Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity, "A new device has been automatically rejected by organization policy.");
             await SendMessageAsync("A device was rejected automatically.", newdeviceCard);
 
         }
         private async Task SendApprovedAutomaticallyCardAsync(DetailedActivity detailedActivity, DeviceModel device)
         {
-            Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity.Message, "A new device has been automatically approved by organization policy.");
+            Attachment newdeviceCard = Cardmanager.NinjaNotificationCard(device.Organization.Name, device.SystemName, detailedActivity, "A new device has been automatically approved by organization policy.");
             await SendMessageAsync("A device was approved automatically.", newdeviceCard);
 
         }

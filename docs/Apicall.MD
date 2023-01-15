@@ -29,4 +29,22 @@ To simplify using the ninja endpoints in methods the ones that are used are coll
     int nodeId = 123;
     DeviceModel device = await api.NinjaFetchAsync<NodeWithDetailedReferences>(NinjaApiEndpoint.getDevice, nodeId);
 ```
-  
+
+
+### Updating models
+The ninjaRMM API webhook stubs are generated from openAPI/swagger using [`OpenAPI-Generator`](https://github.com/OpenAPITools/openapi-generator#13---download-jar) with definitions from https://resources.ninjarmm.com/API/webhook.yaml with documentation available [here](https://eu.ninjarmm.com/apidocs/)
+
+```bash
+# Re-generate models from openAPI code
+java -jar openapi-generator-cli.jar generate -i https://resources.ninjarmm.com/API/webhook.yaml -g aspnetcore -o ninjawebhook --additional-properties packageName=net.hempux.ninjawebhook,buildTarget=library,operationResultTask=true,OperationsAsync=true,sourceFolder=ninjawebhook```
+```
+After this copy over the following files to the `src/Ninja/WebhookClasses` folder
+* CustomEnumConverter.cs
+* DetailedActivity.cs
+* Location.cs
+* Maintenance.cs
+* NodeReferences.cs
+* NodeRole.cs
+* NodeWithDetailedReferences.cs
+* Organization.cs
+* Policy.cs
