@@ -84,4 +84,4 @@ Go to the dedicated [Configuring Ninja section](docs/Ninjasetup.MD)
 
 Visit the [APIdocs](https://app.ninjarmm.com/apidocs/?links.active=core) page to see all the current API endpoint that NinjaOne supports
 
-There is a [dedicated section](docs/Apicall.MD) in the docs on how a ninja API call works within this application wich would give a clue on how to add attional ones.
+There is a [dedicated section](docs/Apicall.MD) in the docs on how a ninja API call works from this application that should give you an idea of how it works and how to implement more features.
