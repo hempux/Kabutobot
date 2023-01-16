@@ -61,16 +61,26 @@ This will create a self-contained executable for that platform in the top folder
 ## Setting up the bot.
 
 Visit the [Bot Framework developer portal](https://dev.botframework.com/bots/new) to register a new bot so that teams knows how to communicate with your bot.  
-To set up the bot and select what channel the ninjaRMM messages will be sent to you'll have to configure `MicrosoftTeamsChannel` and `MicrosoftServiceURL` in the file `appsettings.json` (or under enviroment if using docker)  
+To set up the bot and select what channel the ninjaRMM messages will be sent to you'll have to configure `MicrosoftTeamsChannel` and `MicrosoftServiceURL`
 
-The bot has many configuration parameterers that needs to be set for everything to work, see the [Bot settings](docs/BotConfig.MD) page for details about `appsettings.json` /enviroment variables.  
+## Configururing the application
+The bot has many configuration parameterers that needs to be set for everything to work, depending on how you want to use it you will either have to use `appsettings.json` or enviroment variables with docker.
 
+### With docker 
+see the [Docker section](docs/Dockersupport.md) page for details about configuring the docker image and docker-compose.yml.  
+
+### As a local app
+see the [Bot settings](docs/BotConfig.MD) page for details about `appsettings.json`.  
+
+
+
+## Post-configuration - teams channel-config.
 1. Make sure that the variable `ASPNET_ENVIRONMENT` is set to `development`
 2. Start the bot and @Mention it with the message 'channelinfo' ( like `@kabutobot channelinfo` ) 
 to get a list of all the valid channels and their MicrosoftTeamsChannel
 
 ![channelinfo command screenshot](docs/channelinfo_command.png?raw=true)  
-
+4. Update appsettings.json / docker-compose.yml with the channelinfo the bot outputs, after this all you have to do is to select what acitivites in ninja that should send notifications to to the bot.
 
 
 # Configuring Ninja
