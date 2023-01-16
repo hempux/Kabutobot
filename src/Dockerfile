@@ -2,11 +2,11 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS publish
 WORKDIR /src
-COPY ["ProactiveBot.csproj", "."]
+COPY ["Kabutobot.csproj", "."]
 COPY . .
-RUN dotnet restore "ProactiveBot.csproj" --runtime alpine-x64
+RUN dotnet restore "Kabutobot.csproj" --runtime alpine-x64
 
-RUN dotnet publish "ProactiveBot.csproj" -c Release -o /app/publish \
+RUN dotnet publish "Kabutobot.csproj" -c Release -o /app/publish \
     --no-restore \
     --runtime alpine-x64 \
     --self-contained true \
